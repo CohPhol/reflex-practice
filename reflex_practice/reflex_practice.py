@@ -5,7 +5,7 @@ import reflex as rx
 from rxconfig import config
 from .ui.base import base_page
 
-from . import pages
+from . import navigation, pages
 
 class State(rx.State):
     """The app state."""
@@ -29,16 +29,6 @@ def index() -> rx.Component:
             size="5",
         ),
 
-        rx.input(
-                default_value=State.label,
-                on_change=State.handle_input_change,
-            ),
-
-        rx.link(
-            rx.button("Check out our docs!"),
-            href="https://reflex.dev/docs/getting-started/introduction/",
-            is_external=True,
-        ),
         spacing="5",
         justify="center",
         align="center",
@@ -50,5 +40,3 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
-app.add_page(pages.about_page, route='/about')
-app.add_page(pages.pricing_page, route='/pricing')

@@ -1,14 +1,16 @@
 import reflex as rx
 
+from .. import navigation
 from ..ui.base import base_page
 
+@rx.page(route=navigation.routes.PRICING_ROUTE)
 def pricing_page() -> rx.Component:
     # Welcome Page (Index)
     my_child = rx.vstack(
-        rx.heading("Pricing Page", size="9"),
+        rx.heading("Pricing", size="9"),
 
         rx.text(
-            "Pricing Page!!",
+            "Pricing!!",
             size="5",
         ),
 
