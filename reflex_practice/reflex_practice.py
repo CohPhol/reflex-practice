@@ -40,7 +40,20 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
-app.add_page(blog.blog_post_list_page, route=navigation.routes.BLOG_POSTS_ROUTE)
+app.add_page(
+    blog.blog_post_list_page, 
+    route=navigation.routes.BLOG_POSTS_ROUTE,
+    on_load=blog.BlogPostState.list_entries,
+)
+app.add_page(
+    blog.create_blog_page, 
+    route=navigation.routes.BLOG_POSTS_ADD_ROUTE,
+)
+app.add_page(
+    blog.blog_post_detail_page, 
+    route="/blog/[blog_id]",
+    on_load=blog.BlogPostState.get_post_detail,
+)
 
 app.add_page(contact.contact_page, route=navigation.routes.CONTACT_ROUTE)
 app.add_page(

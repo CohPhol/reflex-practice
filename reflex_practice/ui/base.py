@@ -13,7 +13,7 @@ def base_page(child: rx.Component, hide_navbar = False, *args, **kwargs) -> rx.C
             rx.logo(),
             color_mode(),
         )
-    
+
     return rx.fragment(
         navbar(),
         rx.box(
