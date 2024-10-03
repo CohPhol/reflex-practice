@@ -8,6 +8,7 @@ from .model import BlogPost
 class BlogPostState(rx.State):
     posts: List['BlogPost'] = []
     post: Optional['BlogPost'] = None
+    post_content: str = ""
 
     def handle_submit(self, form_data: dict):
         """Handle the form submit."""
@@ -38,6 +39,7 @@ class BlogPostState(rx.State):
                 )
             ).one_or_none()
             self.post = result
+            self.post_content = result.content
 
     def list_entries(self):
         with rx.session() as session:
@@ -51,3 +53,12 @@ class BlogPostState(rx.State):
     #             select(BlogPost)
     #         )
     #         self.posts = result
+
+class BlogEditFormState(BlogPostState):
+    form_data: dict = {}
+    content: str = ""
+    
+    def handle_submit(self, form_data: dict):
+        self.form_data = form_data
+        post_id = form_data.pop('post_id')
+        updated_data = {**form_data}
