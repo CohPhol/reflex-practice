@@ -15,6 +15,7 @@ def blog_post_create_form():
                     placeholder="Content",
                     name="content",
                     width="100%",
+                    height="50vh",
                 ),
                 rx.button("Submit", type="submit"),
                 justify='center',
@@ -23,6 +24,7 @@ def blog_post_create_form():
             on_submit=state.BlogCreateFormState.handle_submit,
             reset_on_submit=True,
         ),
+        width="50%",
     )
 
 def blog_post_edit_form() -> rx.Component:
@@ -42,7 +44,7 @@ def blog_post_edit_form() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.input(
-                            defaul_value=title,
+                            value=title,
                             placeholder="Title",
                             name="title",
                             width="100%",
@@ -53,6 +55,7 @@ def blog_post_edit_form() -> rx.Component:
                             placeholder="Content",
                             name="content",
                             width="100%",
+                            height="50vh",
                         ),
                         rx.button("Submit", type="submit"),
                         justify='center',
@@ -60,4 +63,5 @@ def blog_post_edit_form() -> rx.Component:
                     ),
                     on_submit=state.BlogEditFormState.handle_submit,
                 ),
+                width="50%",
             )

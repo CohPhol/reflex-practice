@@ -1,11 +1,10 @@
 import reflex as rx
-
 from ..ui.base import base_page
 
 from . import forms
 
 def create_blog_page() -> rx.Component:
-    my_form = forms.blog_form()
+    my_form = forms.blog_post_create_form()
     my_child = rx.vstack(
         rx.heading("CREATE BLOG", size="8"),
         my_form,
