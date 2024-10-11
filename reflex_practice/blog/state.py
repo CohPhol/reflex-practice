@@ -10,19 +10,6 @@ class BlogPostState(rx.State):
     post: Optional['BlogPost'] = None
     post_content: str = ""
 
-    def handle_submit(self, form_data: dict):
-        """Handle the form submit."""
-        self.form_data = form_data
-        data = {}
-        for key, value in form_data.items():
-            if value == "" or value is None:
-                continue
-            data[key] = value
-        with rx.session() as session:
-            db_entry = BlogPost(**data)
-            session.add(db_entry)
-            session.commit()
-
     @rx.var
     def blog_post_id(self):
         # print(self.router.page.params)
@@ -47,12 +34,39 @@ class BlogPostState(rx.State):
                 select(BlogPost)
             ).all()
             self.posts = posts
-    # def get_post(self, post_id):
-    #     with rx.session() as session:
-    #         result = session.exec(
-    #             select(BlogPost)
-    #         )
-    #         self.posts = result
+
+    def create_post(self, form_data: dict):
+        with rx.session() as session:
+            post = BlogPost(**form_data)
+            session.add(post)
+            session.commit()
+            session.refresh(post)
+            self.post = post
+
+    def edit_post(self, post_id:int, updated_data: dict):
+        with rx.session() as session:
+            post = session.exec(
+                select(BlogPost).where(
+                    BlogPost.id == self.blog_post_id
+                )
+            ).one_or_none()
+
+            if post is None:
+                return
+            for key, value in updated_data.items():
+                setattr(post, key, value)
+            
+            session.add(post)
+            session.commit()
+            session.refresh(post)
+            post.title = updated_data.get()
+
+class BlogCreateFormState(BlogPostState):
+    form_data:dict = {}
+
+    def handle_submit(self, form_data: dict):
+        self.form_data = form_data
+        self.create_post(form_data)
 
 class BlogEditFormState(BlogPostState):
     form_data: dict = {}
@@ -62,3 +76,5 @@ class BlogEditFormState(BlogPostState):
         self.form_data = form_data
         post_id = form_data.pop('post_id')
         updated_data = {**form_data}
+        # print(post_id, updated_data)
+        self.edit_post(post_id, updated_data)

@@ -1,9 +1,8 @@
 import reflex as rx
 
-from .state import BlogPostState
-from .state import BlogEditFormState
+from . import state
 
-def blog_form():
+def blog_post_create_form():
     return rx.vstack(
         rx.form(
             rx.vstack(
@@ -21,15 +20,15 @@ def blog_form():
                 justify='center',
                 align='center',
             ),
-            on_submit=BlogPostState.handle_submit,
+            on_submit=state.BlogCreateFormState.handle_submit,
             reset_on_submit=True,
         ),
     )
 
 def blog_post_edit_form() -> rx.Component:
-    post = BlogEditFormState.post
+    post = state.BlogEditFormState.post
     title = post.title
-    post_content = BlogEditFormState.post_content
+    post_content = state.BlogEditFormState.post_content
 
     return rx.vstack(
                 rx.form(
@@ -50,7 +49,7 @@ def blog_post_edit_form() -> rx.Component:
                         ),
                         rx.text_area(
                             value=post_content,
-                            on_change=BlogEditFormState.set_post_content,
+                            on_change=state.BlogEditFormState.set_post_content,
                             placeholder="Content",
                             name="content",
                             width="100%",
@@ -59,6 +58,6 @@ def blog_post_edit_form() -> rx.Component:
                         justify='center',
                         align='center',
                     ),
-                    on_submit=BlogEditFormState.handle_submit,
+                    on_submit=state.BlogEditFormState.handle_submit,
                 ),
             )
