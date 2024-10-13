@@ -1,11 +1,12 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
+import reflex_local_auth
 
 from rxconfig import config
 from .ui.base import base_page
 
-from . import blog, navigation, pages, contact
+from . import auth, blog, navigation, pages, contact
 
 class State(rx.State):
     """The app state."""
@@ -40,6 +41,18 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
+
+app.add_page(
+    auth.pages.my_login_page,
+    route=reflex_local_auth.routes.LOGIN_ROUTE,
+    title="Login",
+)
+app.add_page(
+    auth.pages.my_register_page,
+    route=reflex_local_auth.routes.REGISTER_ROUTE,
+    title="Register",
+)
+
 app.add_page(
     blog.blog_post_list_page, 
     route=navigation.routes.BLOG_POSTS_ROUTE,
@@ -61,6 +74,11 @@ app.add_page(
 )
 
 app.add_page(contact.contact_page, route=navigation.routes.CONTACT_ROUTE)
+app.add_page(
+    pages.protected.protected_page, 
+    route="/protected",
+    on_load=auth.SessionState.on_load
+)
 app.add_page(
     contact.contact_entries_list_page, 
     route=navigation.routes.CONTACT_ENTRIES_ROUTE,

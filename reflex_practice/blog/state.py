@@ -1,6 +1,7 @@
 import reflex as rx
 
 from typing import Optional, List
+from datetime import datetime
 from .model import BlogPost
 from sqlmodel import select
 from .model import BlogPost
@@ -14,6 +15,7 @@ class BlogPostState(rx.State):
     posts: List['BlogPost'] = []
     post: Optional['BlogPost'] = None
     post_content: str = ""
+    post_publish_active: bool = False
 
     @rx.var
     def blog_post_id(self):
@@ -38,7 +40,7 @@ class BlogPostState(rx.State):
                 return
             result = session.exec(
                 select(BlogPost).where(
-                    BlogPost.id == self.blog_post_id
+                    (BlogPost.id == self.blog_post_id)
                 )
             ).one_or_none()
             self.post = result
@@ -46,11 +48,20 @@ class BlogPostState(rx.State):
                 self.post_content = ""
                 return
             self.post_content = result.content
+            self.post_publish_active = result.publish_active
 
-    def list_entries(self):
+    def list_entries(self, published_only=True):
+        lookup_args = ()
+        if published_only:
+            lookup_args = (
+                (BlogPost.publish_active == True) &
+                (BlogPost.publish_date < datetime.now())
+            )
         with rx.session() as session:
             posts = session.exec(
-                select(BlogPost)
+                select(BlogPost).where(
+                    *lookup_args
+                )
             ).all()
             self.posts = posts
 
@@ -97,12 +108,46 @@ class BlogCreateFormState(BlogPostState):
 
 class BlogEditFormState(BlogPostState):
     form_data: dict = {}
-    content: str = ""
+
+    @rx.var
+    def publish_display_date(self) -> str:
+        if not self.post:
+            return datetime.now().strftime("%Y-%m-%d")
+        if not self.post.publish_date:
+            return datetime.now().strftime("%Y-%m-%d")
+        return self.post.publish_date.strftime("%Y-%m-%d")
+    
+    @rx.var
+    def publish_display_time(self) -> str:
+        if not self.post:
+            return datetime.now().strftime("%H:%M:%S")
+        if not self.post.publish_date:
+            return datetime.now().strftime("%H:%M:%S")
+        return self.post.publish_date.strftime("%H:%M:%S")
+        
     
     def handle_submit(self, form_data: dict):
         self.form_data = form_data
         post_id = form_data.pop('post_id')
+        publish_date = None
+        if 'publish_date' in form_data:
+            publish_date = form_data.pop('publish_date')
+        publish_time = None
+        if 'publish_time' in form_data:
+            publish_time = form_data.pop('publish_time')
+        publish_input_string = f"{publish_date} {publish_time}"
+
+        try:
+            final_publish_date = datetime.strptime(publish_input_string, '%Y-%m-%d %H:%M:%S')
+        except:
+            final_publish_date = None
+
+        publish_active = False
+        if 'publish_active' in form_data:
+            publish_active = form_data.pop('publish_active') == "on"
         updated_data = {**form_data}
+        updated_data['publish_active'] = publish_active
+        updated_data['publish_date'] = final_publish_date
         # print(post_id, updated_data)
         self.edit_post(post_id, updated_data)
         return self.to_blog_post()
