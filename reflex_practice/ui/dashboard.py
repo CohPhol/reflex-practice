@@ -20,6 +20,5 @@ def base_dashboard_page(child: rx.Component, *args, **kwargs) -> rx.Component:
                 width="100%",
             ),
         ),
-        color_mode(),
         id="my-base-container",
     )
