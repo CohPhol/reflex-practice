@@ -29,9 +29,11 @@ class State(rx.State):
 
 def index() -> rx.Component:
     # Welcome Page (Index)
+    my_user_object = SessionState.authenticated_user
+
     my_child = rx.vstack(
         rx.heading(State.label, size="9"),
-
+        rx.text(my_user_object.to_string()),
         rx.text(
             "Get started by editing ",
             rx.code(f"{config.app_name}/{config.app_name}.py"),

@@ -1,10 +1,11 @@
 import reflex as rx
 
 from typing import List
-from .model import ContactEntryModel
+from ..models import ContactEntryModel
 from sqlmodel import select
+from ..auth.state import SessionState
 
-class ContactState(rx.State):
+class ContactState(SessionState):
     form_data: dict = {}
     entries: List['ContactEntryModel'] = []
 
@@ -16,6 +17,10 @@ class ContactState(rx.State):
             if value == "" or value is None:
                 continue
             data[key] = value
+        if self.my_user_id is not None:
+            data['user_id'] = self.my_user_id
+
+        print("Contact data: ", data)
         with rx.session() as session:
             db_entry = ContactEntryModel(**data)
             session.add(db_entry)

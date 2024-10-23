@@ -133,6 +133,8 @@ def sidebar_items() -> rx.Component:
         sidebar_item("Dashboard", "layout-dashboard", navigation.routes.HOME_ROUTE),
         sidebar_item("Blog", "square-library", navigation.routes.BLOG_POSTS_ROUTE),
         sidebar_item("Create Blog Post", "square-library", navigation.routes.BLOG_POSTS_ADD_ROUTE),
+        sidebar_item("Contact", "mail", navigation.routes.CONTACT_ROUTE),
+        sidebar_item("Create Contact", "mails", navigation.routes.CONTACT_ENTRIES_ROUTE),
         spacing="1",
         width="100%",
     )

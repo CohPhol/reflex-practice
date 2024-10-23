@@ -4,9 +4,10 @@ from .. import navigation
 
 from ..ui.base import base_page
 
-from . import state, model
+from ..models import BlogPost
+from . import state
 
-def blog_post_detail_link(child: rx.Component, post: model.BlogPost):
+def blog_post_detail_link(child: rx.Component, post: BlogPost):
     if post is None:
         return rx.fragment(child)
     post_id = post.id
@@ -19,7 +20,7 @@ def blog_post_detail_link(child: rx.Component, post: model.BlogPost):
         href=post_detail_url
     )
 
-def blog_post_list_item(post: model.BlogPost):
+def blog_post_list_item(post: BlogPost):
     return rx.box(
         blog_post_detail_link(
             rx.heading(post.title),

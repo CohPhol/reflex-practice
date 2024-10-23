@@ -4,12 +4,16 @@ from .. import navigation
 
 from ..ui.base import base_page
 
-from . import form, state, model
+from . import form, state
+from ..models import ContactEntryModel
 
-def contact_entry_list_item(contact: model.ContactEntryModel):
+def contact_entry_list_item(contact: ContactEntryModel):
     return rx.box(
         rx.heading(contact.first_name),
         rx.text(contact.message),
+        rx.cond(contact.user_id,
+                rx.text("User ID: ", f"{contact.user_id}",),
+                rx.fragment("")),
         padding='1em',
     )
 

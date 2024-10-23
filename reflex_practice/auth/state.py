@@ -1,11 +1,17 @@
 import reflex as rx
 import reflex_local_auth
-from .model import UserInfo
+from ..models import UserInfo
 from typing import Optional
 import sqlmodel
 
 
 class SessionState(reflex_local_auth.LocalAuthState):
+
+    @rx.var(cache=True)
+    def my_user_id(self) -> str | None:
+        if self.authenticated_user.id < 0:
+            return None
+        return self.authenticated_user.id
 
     @rx.var(cache=True)
     def authenticated_username(self) -> str | None:
@@ -26,6 +32,7 @@ class SessionState(reflex_local_auth.LocalAuthState):
 
             if result is None:
                 return None
+            result.user
             # user_object = result.user
             # print(result.user)
             return result
