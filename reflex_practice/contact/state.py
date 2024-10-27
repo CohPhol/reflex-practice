@@ -19,6 +19,8 @@ class ContactState(SessionState):
             data[key] = value
         if self.my_user_id is not None:
             data['user_id'] = self.my_user_id
+        if self.my_user_info_id is not None:
+            data['user_info_id'] = self.my_user_info_id
 
         print("Contact data: ", data)
         with rx.session() as session:

@@ -2,6 +2,7 @@ import reflex as rx
 
 from typing import Optional, List
 from datetime import datetime
+from ..auth.state import SessionState
 from ..models import BlogPost
 from sqlmodel import select
 from .. import navigation
@@ -10,7 +11,7 @@ BLOG_POSTS_ROUTE = navigation.routes.BLOG_POSTS_ROUTE
 if BLOG_POSTS_ROUTE.endswith("/"):
     BLOG_POSTS_ROUTE = BLOG_POSTS_ROUTE[:-1]
 
-class BlogPostState(rx.State):
+class BlogPostState(SessionState):
     posts: List['BlogPost'] = []
     post: Optional['BlogPost'] = None
     post_content: str = ""
@@ -42,6 +43,8 @@ class BlogPostState(rx.State):
                     (BlogPost.id == self.blog_post_id)
                 )
             ).one_or_none()
+            if result.user_info:
+                result.user_info.user
             self.post = result
             if result is None:
                 self.post_content = ""
@@ -101,8 +104,12 @@ class BlogCreateFormState(BlogPostState):
     form_data:dict = {}
 
     def handle_submit(self, form_data: dict):
-        self.form_data = form_data
-        self.create_post(form_data)
+        data = form_data.copy()
+        print(self.my_user_info_id)
+        if self.my_user_info_id is not None:
+            data['user_info_id'] = self.my_user_info_id
+        self.form_data = data
+        self.create_post(data)
         return self.to_blog_post(edit_page=True)
 
 class BlogEditFormState(BlogPostState):

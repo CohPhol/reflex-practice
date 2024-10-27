@@ -19,6 +19,18 @@ def blog_post_detail_page() -> rx.Component:
         ),
         edit_link_element,
         rx.text(
+            "User Info ID: ", state.BlogPostState.post.user_info_id,
+            white_space="pre-wrap",
+        ),
+        rx.text(
+            "User Info: ", state.BlogPostState.post.user_info.to_string(),
+            white_space="pre-wrap",
+        ),
+        rx.text(
+            "User Info: ", state.BlogPostState.post.user_info.user.to_string(),
+            white_space="pre-wrap",
+        ),
+        rx.text(
             state.BlogPostState.post.publish_date,
             white_space="pre-wrap",
         ),

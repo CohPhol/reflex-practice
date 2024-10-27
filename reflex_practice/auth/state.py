@@ -8,6 +8,12 @@ import sqlmodel
 class SessionState(reflex_local_auth.LocalAuthState):
 
     @rx.var(cache=True)
+    def my_user_info_id(self) -> str | None:
+        if self.authenticated_user_info is None:
+            return None
+        return self.authenticated_user_info.id
+    
+    @rx.var(cache=True)
     def my_user_id(self) -> str | None:
         if self.authenticated_user.id < 0:
             return None
@@ -32,7 +38,7 @@ class SessionState(reflex_local_auth.LocalAuthState):
 
             if result is None:
                 return None
-            result.user
+            # result.user
             # user_object = result.user
             # print(result.user)
             return result
